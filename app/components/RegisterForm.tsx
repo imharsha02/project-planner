@@ -65,7 +65,7 @@ export function RegisterForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8 w-full mx-auto"
+        className="space-y-8 mx-auto"
       >
         {error && (
           <div
@@ -83,7 +83,7 @@ export function RegisterForm() {
             <FormItem>
               <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input placeholder="Username" {...field} className="w-1/2" />
+                <Input placeholder="Username" {...field} />
               </FormControl>
               <FormDescription>
                 This is your public display name.
@@ -100,7 +100,7 @@ export function RegisterForm() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="Email" {...field} className="w-1/2" />
+                <Input placeholder="Email" {...field} />
               </FormControl>
               <FormDescription>
                 This is the mail we use to contact you
@@ -118,12 +118,7 @@ export function RegisterForm() {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Password"
-                  type="password"
-                  {...field}
-                  className="w-1/2"
-                />
+                <Input placeholder="Password" type="password" {...field} />
               </FormControl>
               <FormDescription>Enter your password</FormDescription>
               <FormMessage />
@@ -131,7 +126,7 @@ export function RegisterForm() {
           )}
         />
 
-        <Button type="submit" className="w-1/2">
+        <Button type="submit" className="w-full">
           Register
         </Button>
       </form>
