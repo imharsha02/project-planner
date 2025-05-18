@@ -8,7 +8,7 @@ const GetStarted = () => {
       <TypographyH3 className="text-center">
         Register to the planner
       </TypographyH3>
-      <div>
+      <div className="flex justify-center">
         <RegisterForm />
       </div>
     </div>
