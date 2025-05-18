@@ -1,5 +1,6 @@
 import React from "react";
 import { TypographyH3 } from "../components/Typography/TypographyH3";
+import { RegisterForm } from "../components/RegisterForm";
 
 const GetStarted = () => {
   return (
@@ -8,7 +9,7 @@ const GetStarted = () => {
         Register to the planner
       </TypographyH3>
       <div>
-        
+        <RegisterForm />
       </div>
     </div>
   );
