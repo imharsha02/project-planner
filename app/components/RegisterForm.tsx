@@ -40,31 +40,7 @@ export function RegisterForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      let profilePicUrl = "";
-
       // If a file is selected, upload it
-      if (values.profilePic && values.profilePic instanceof File) {
-        const file = values.profilePic;
-        const fileExt = file.name.split(".").pop();
-        const fileName = `${Date.now()}.${fileExt}`;
-        const filePath = `${fileName}`;
-
-        const { error: uploadError } = await supabase.storage
-          .from("profile-pic") // your bucket name
-          .upload(filePath, file);
-
-        if (uploadError) {
-          alert("Failed to upload image");
-          return;
-        }
-
-        // Get public URL
-        const { data } = supabase.storage
-          .from("profile-pic")
-          .getPublicUrl(filePath);
-
-        profilePicUrl = data.publicUrl;
-      }
 
       // Now send the user data with the image URL to your backend
       const res = await fetch("http://localhost:3001/api/data", {
@@ -74,7 +50,6 @@ export function RegisterForm() {
           username: values.username,
           email: values.email,
           password: values.password,
-          profile_pic: profilePicUrl, // send the URL, not the file
         }),
       });
 
@@ -154,39 +129,6 @@ export function RegisterForm() {
           )}
         />
 
-        {/* Profile pic 👇 */}
-        <FormField
-          control={form.control}
-          name="profilePic"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Profile pic</FormLabel>
-              <FormControl>
-                <Input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (!file) {
-                      field.onChange(""); // No file selected
-                      return;
-                    }
-                    if (!file.type.startsWith("image/")) {
-                      alert("Please select a valid image file.");
-                      e.target.value = ""; // Clear the input
-                      field.onChange(""); // Clear the form value
-                      return;
-                    }
-                    field.onChange(file); // Only set if it's an image
-                  }}
-                  className="w-1/2"
-                />
-              </FormControl>
-              <FormDescription>Add your profile pic</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
         <Button type="submit" className="w-1/2">
           Register
         </Button>
