@@ -34,7 +34,7 @@ const getData: RequestHandler = async (_, res) => {
 };
 
 const postData: RequestHandler = async (req, res) => {
-  const { username, email, password, profile_pic } = req.body;
+  const { username, email, password } = req.body;
 
   // Validate required fields
   if (!username || !email || !password) {
@@ -43,6 +43,30 @@ const postData: RequestHandler = async (req, res) => {
   }
 
   try {
+    // Check for existing username
+    const { data: existingUsername } = await supabase
+      .from("users")
+      .select("username")
+      .eq("username", username)
+      .single();
+
+    if (existingUsername) {
+      res.status(400).json({ error: "Username already exists" });
+      return;
+    }
+
+    // Check for existing email
+    const { data: existingEmail } = await supabase
+      .from("users")
+      .select("email")
+      .eq("email", email)
+      .single();
+
+    if (existingEmail) {
+      res.status(400).json({ error: "Email already exists" });
+      return;
+    }
+
     // Hash the password with a salt round of 10
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -52,8 +76,7 @@ const postData: RequestHandler = async (req, res) => {
         {
           username,
           email,
-          password: hashedPassword, // Store the hashed password
-          profile_pic,
+          password: hashedPassword,
         },
       ])
       .select();
@@ -64,7 +87,7 @@ const postData: RequestHandler = async (req, res) => {
     }
     res.status(201).json(data);
   } catch (error) {
-    console.error("Error hashing password:", error);
+    console.error("Error processing registration:", error);
     res.status(500).json({ error: "Error processing registration" });
   }
 };

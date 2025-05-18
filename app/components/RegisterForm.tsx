@@ -13,36 +13,29 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { supabase } from "@/lib/supabaseClient"; // adjust path as needed
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const formSchema = z.object({
   username: z.string().min(2).max(50),
   email: z.string().min(3),
   password: z.string().min(8),
-  profilePic: z.any().optional(),
 });
 export function RegisterForm() {
-  // 1. Define your form.
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       username: "",
       email: "",
       password: "",
-      profilePic: "",
     },
   });
 
-  // function onSubmit(values: z.infer<typeof formSchema>) {
-  //   console.log(values);
-  //   setUsers(values);
-  // }
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      // If a file is selected, upload it
-
-      // Now send the user data with the image URL to your backend
+      setError(null); // Clear any previous errors
       const res = await fetch("http://localhost:3001/api/data", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -56,14 +49,15 @@ export function RegisterForm() {
       const result = await res.json();
 
       if (!res.ok) {
-        throw new Error(result.error || "Failed to register");
+        setError(result.error || "Failed to register");
+        return; // Don't proceed with navigation if there's an error
       }
 
       console.log("User registered successfully:", result);
-      // You can add navigation or success message here
+      router.push("/project-description");
     } catch (err) {
       console.error("Registration error:", err);
-      // You can add error handling UI feedback here
+      setError("An unexpected error occurred. Please try again.");
     }
   }
 
@@ -73,6 +67,14 @@ export function RegisterForm() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-8 w-full mx-auto"
       >
+        {error && (
+          <div
+            className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded relative"
+            role="alert"
+          >
+            <span className="block sm:inline">{error}</span>
+          </div>
+        )}
         {/* Username 👇 */}
         <FormField
           control={form.control}
