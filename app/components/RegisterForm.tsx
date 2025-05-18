@@ -65,7 +65,7 @@ export function RegisterForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8 mx-auto"
+        className="space-y-8 mx-auto my-3"
       >
         {error && (
           <div
