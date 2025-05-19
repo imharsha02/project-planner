@@ -92,6 +92,11 @@ const postData: RequestHandler = async (req, res) => {
   }
 };
 
+// Add a root route handler
+app.get("/", (req, res) => {
+  res.send("API is running. Available endpoints: /api/data");
+});
+
 app.get("/api/data", getData);
 app.post("/api/data", postData);
 
