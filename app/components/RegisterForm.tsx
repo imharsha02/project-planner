@@ -15,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { API_URL } from "@/lib/config";
 
 const formSchema = z.object({
   username: z.string().min(2).max(50),
@@ -36,7 +37,7 @@ export function RegisterForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       setError(null); // Clear any previous errors
-      const res = await fetch("http://localhost:3001/api/data", {
+      const res = await fetch(`${API_URL}/api/data`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -7,7 +7,18 @@ import bcrypt from "bcrypt";
 dotenv.config();
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    // Allow requests from these origins
+    origin: [
+      "http://localhost:3000",
+      "https://project-planner-ten-pearl.vercel.app",
+      // Add any other frontend domains you're using
+    ],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  })
+);
 
 const port = process.env.PORT || 3001;
 

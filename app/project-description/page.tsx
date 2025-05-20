@@ -10,37 +10,54 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { API_URL } from "@/lib/config";
+
+interface UserData {
+  username: string;
+  email: string;
+  created_at: string;
+}
 
 const ProjectDescription = () => {
-  const [username, setUsername] = useState<string>("");
+  const [userData, setUserData] = useState<UserData | null>(null);
   const [showDialog, setShowDialog] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchUsername = async () => {
+    const fetchUserData = async () => {
       try {
-        const response = await fetch("http://localhost:3001/api/data");
+        setIsLoading(true);
+        setError(null);
+        const response = await fetch(`${API_URL}/api/data`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch user data");
+        }
         const data = await response.json();
         // Get the most recently registered user
         const latestUser = data[data.length - 1];
         if (latestUser) {
-          setUsername(latestUser.username);
+          setUserData(latestUser);
         }
       } catch (error) {
-        console.error("Error fetching username:", error);
+        console.error("Error fetching user data:", error);
+        setError("Failed to load user data. Please try again later.");
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    fetchUsername();
+    fetchUserData();
   }, []);
 
   return (
-    <div>
+    <div className="container mx-auto px-4 py-8">
       <AlertDialog open={showDialog} onOpenChange={setShowDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {username
-                ? `${username}! Welcome to project planner`
+              {userData
+                ? `${userData.username}! Welcome to project planner`
                 : "Welcome to project planner"}
             </AlertDialogTitle>
             <AlertDialogDescription>
@@ -58,6 +75,44 @@ const ProjectDescription = () => {
       <TypographyH3 className="tracking-wide text-center py-2 mb-3">
         Describe your project
       </TypographyH3>
+
+      {isLoading ? (
+        <div className="text-center py-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
+          <p className="mt-2">Loading your data...</p>
+        </div>
+      ) : error ? (
+        <div
+          className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded relative"
+          role="alert"
+        >
+          <span className="block sm:inline">{error}</span>
+        </div>
+      ) : userData ? (
+        <div className="bg-white shadow rounded-lg p-6 max-w-2xl mx-auto">
+          <h2 className="text-xl font-semibold mb-4">Your Profile</h2>
+          <div className="space-y-4">
+            <div>
+              <p className="text-sm text-gray-500">Username</p>
+              <p className="font-medium">{userData.username}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Email</p>
+              <p className="font-medium">{userData.email}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Member Since</p>
+              <p className="font-medium">
+                {new Date(userData.created_at).toLocaleDateString()}
+              </p>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="text-center py-4 text-gray-500">
+          No user data available
+        </div>
+      )}
     </div>
   );
 };
