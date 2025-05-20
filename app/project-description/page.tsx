@@ -15,7 +15,6 @@ import { API_URL } from "@/lib/config";
 interface UserData {
   username: string;
   email: string;
-  created_at: string;
 }
 
 const ProjectDescription = () => {
@@ -99,12 +98,6 @@ const ProjectDescription = () => {
             <div>
               <p className="text-sm text-gray-500">Email</p>
               <p className="font-medium">{userData.email}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Member Since</p>
-              <p className="font-medium">
-                {new Date(userData.created_at).toLocaleDateString()}
-              </p>
             </div>
           </div>
         </div>

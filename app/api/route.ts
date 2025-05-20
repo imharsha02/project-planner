@@ -1,39 +1,39 @@
-import express from "express";
-//import cors from "cors";
-type RequestHandler = express.RequestHandler;
-import { createClient } from "@supabase/supabase-js";
-import dotenv from "dotenv";
-import bcrypt from "bcrypt";
-dotenv.config();
+import express from "express"; // Imported express
+type RequestHandler = express.RequestHandler; // used request handler from express
+import { createClient } from "@supabase/supabase-js"; // import createClient from supabase
+import dotenv from "dotenv"; // Imported the dotenv file
+import bcrypt from "bcrypt"; // Imported bcrypt
+dotenv.config(); // Configured the dotenv file
 
-const app = express();
+const app = express(); // Using express
 
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3001; // Creating a constant that holds the port number
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL; // Taking the supabase url
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY; // Taking the supabsae anon key
 if (!supabaseUrl || !supabaseKey) {
   console.error(
     "Error: NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables are not set."
   );
   process.exit(1);
-}
-const supabase = createClient(supabaseUrl, supabaseKey);
+} // Just tell what to do if there is no key or url
+const supabase = createClient(supabaseUrl, supabaseKey); // Creating a client using the url and key
 
-app.use(express.json());
+app.use(express.json()); // Converting express to json to show at the endpoint
 
 const getData: RequestHandler = async (_, res) => {
-  const { data, error } = await supabase.from("users").select("*");
+  // Function to get data from the database via the server
+  const { data, error } = await supabase.from("users").select("*"); // Extracting data and error from the DB's users table
 
   if (error) {
     res.status(500).json({ error: error.message });
     return;
   }
   res.json(data || []);
-};
+}; // Returning empty array if there is an error
 
 const postData: RequestHandler = async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email, password } = req.body; // From the request body, grabbing the username, email and password
 
   // Validate required fields
   if (!username || !email || !password) {
