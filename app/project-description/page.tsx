@@ -12,8 +12,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { API_URL } from "@/lib/config";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { TypographyP } from "../components/Typography/TypographyP";
-
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 interface UserData {
   username: string;
   email: string;
@@ -21,7 +20,7 @@ interface UserData {
 
 const ProjectDescription = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
-  const [showDialog, setShowDialog] = useState(true);
+  const [showDialog, setShowDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -39,6 +38,14 @@ const ProjectDescription = () => {
         const latestUser = data[data.length - 1];
         if (latestUser) {
           setUserData(latestUser);
+
+          // Check local storage to see if this user has seen the welcome dialog
+          const hasSeenWelcome = localStorage.getItem(
+            `welcomeSeen_${latestUser.username}`
+          );
+          if (!hasSeenWelcome) {
+            setShowDialog(true);
+          }
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -51,32 +58,16 @@ const ProjectDescription = () => {
     fetchUserData();
   }, []);
 
+  // Function to handle dialog close and set local storage flag
+  const handleDialogClose = () => {
+    if (userData) {
+      localStorage.setItem(`welcomeSeen_${userData.username}`, "true");
+    }
+    setShowDialog(false);
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
-      <AlertDialog open={showDialog} onOpenChange={setShowDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              {userData
-                ? `${userData.username}! Welcome to project planner`
-                : "Welcome to project planner"}
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              Click Continue and start planning your project
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction onClick={() => setShowDialog(false)}>
-              Continue
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      <TypographyH3 className="tracking-wide text-center py-2 mb-3">
-        Describe your project
-      </TypographyH3>
-
       {isLoading ? (
         <div className="text-center py-4">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
@@ -90,21 +81,50 @@ const ProjectDescription = () => {
           <span className="block sm:inline">{error}</span>
         </div>
       ) : userData ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>Your Profile</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div>
-              <TypographyP className="font-semibold">Username</TypographyP>
-              <TypographyP>{userData.username}</TypographyP>
-            </div>
-            <div>
-              <TypographyP className="font-semibold">Email</TypographyP>
-              <TypographyP>{userData.email}</TypographyP>
-            </div>
-          </CardContent>
-        </Card>
+        <>
+          <AlertDialog open={showDialog} onOpenChange={setShowDialog}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  {userData.username}! Welcome to project planner
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  Click Continue and start planning your project
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogAction onClick={handleDialogClose}>
+                  Continue
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
+          <TypographyH3 className="tracking-wide text-center py-2 mb-3">
+            Describe your project
+          </TypographyH3>
+
+          <Avatar>
+            <AvatarImage src="https://github.com/shadcn.png" />
+            <AvatarFallback>CN</AvatarFallback>
+          </Avatar>
+
+          <Card className="w-max">
+            <CardHeader>
+              <CardTitle>Your Profile</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div>
+                <p className="font-semibold">Username</p>
+                <p>{userData.username}</p>
+              </div>
+              <div>
+                <p className="font-semibold">Email</p>
+                <p>{userData.email}</p>
+              </div>
+            </CardContent>
+          </Card>
+        </>
       ) : (
         <div className="text-center py-4 text-gray-500">
           No user data available
