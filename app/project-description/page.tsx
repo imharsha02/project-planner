@@ -11,6 +11,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { API_URL } from "@/lib/config";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { TypographyP } from "../components/Typography/TypographyP";
 
 interface UserData {
   username: string;
@@ -88,19 +90,21 @@ const ProjectDescription = () => {
           <span className="block sm:inline">{error}</span>
         </div>
       ) : userData ? (
-        <div className="bg-white shadow rounded-lg p-6 max-w-2xl mx-auto">
-          <h2 className="text-xl font-semibold mb-4">Your Profile</h2>
-          <div className="space-y-4">
+        <Card>
+          <CardHeader>
+            <CardTitle>Your Profile</CardTitle>
+          </CardHeader>
+          <CardContent>
             <div>
-              <p className="text-sm text-gray-500">Username</p>
-              <p className="font-medium">{userData.username}</p>
+              <TypographyP className="font-semibold">Username</TypographyP>
+              <TypographyP>{userData.username}</TypographyP>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Email</p>
-              <p className="font-medium">{userData.email}</p>
+              <TypographyP className="font-semibold">Email</TypographyP>
+              <TypographyP>{userData.email}</TypographyP>
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       ) : (
         <div className="text-center py-4 text-gray-500">
           No user data available
