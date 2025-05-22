@@ -104,7 +104,7 @@ const ProjectDescription = () => {
             Describe your project
           </TypographyH3>
 
-          <Avatar>
+          <Avatar className="">
             <AvatarImage src="https://github.com/shadcn.png" />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>

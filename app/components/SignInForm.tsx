@@ -19,17 +19,15 @@ import { API_URL } from "@/lib/config";
 
 const formSchema = z.object({
   username: z.string().min(2).max(50),
-  email: z.string().min(3),
   password: z.string().min(8),
 });
-export default function RegisterForm() {
+export default function SignInForm() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       username: "",
-      email: "",
       password: "",
     },
   });
@@ -42,7 +40,6 @@ export default function RegisterForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           username: values.username,
-          email: values.email,
           password: values.password,
         }),
       });
@@ -53,9 +50,9 @@ export default function RegisterForm() {
         throw new Error(result.error || "Failed to register");
       }
 
-      console.log("User registered successfully:", result);
+      console.log("User logged in successfully:", result);
       // Redirect to ProjectDescription page after successful registration
-      router.push("/project-description");
+      router.push("/your-projects");
     } catch (err) {
       console.error("Registration error:", err);
       setError("An unexpected error occurred. Please try again.");
@@ -66,7 +63,7 @@ export default function RegisterForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8 mx-auto my-3"
+        className="space-y-8 mx-auto my-3 w-max"
       >
         {error && (
           <div
@@ -93,24 +90,6 @@ export default function RegisterForm() {
             </FormItem>
           )}
         />
-        {/* Email 👇 */}
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input placeholder="Email" {...field} />
-              </FormControl>
-              <FormDescription>
-                This is the mail we use to contact you
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
         {/* Password 👇 */}
         <FormField
           control={form.control}
@@ -128,7 +107,7 @@ export default function RegisterForm() {
         />
 
         <Button type="submit" className="w-full">
-          Register
+          Sign in
         </Button>
       </form>
     </Form>
