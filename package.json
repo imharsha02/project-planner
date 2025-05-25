@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "server": "node --trace-warnings server/server.ts"
+    "server": "npx node server/server.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
