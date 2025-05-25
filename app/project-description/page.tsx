@@ -100,19 +100,20 @@ const ProjectDescription = () => {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
+          <div className="flex items-center w-full justify-between">
+            <TypographyH3 className="w-full tracking-wide text-center py-2 mb-3">
+              Describe your project
+            </TypographyH3>
 
-          <TypographyH3 className="tracking-wide text-center py-2 mb-3">
-            Describe your project
-          </TypographyH3>
-
-          <Avatar className="h-20 w-20 mb-4">
-            <AvatarImage
-              src={userData.profilePic || "https://github.com/shadcn.png"}
-            />
-            <AvatarFallback>
-              {userData.username.slice(0, 2).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
+            <Avatar className="h-20 w-20 mb-4 flex">
+              <AvatarImage
+                src={userData.profilePic || "https://github.com/shadcn.png"}
+              />
+              <AvatarFallback>
+                {userData.username.slice(0, 2).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+          </div>
 
           <Card className="w-max">
             <CardHeader>
