@@ -27,7 +27,28 @@ if (!supabaseUrl || !supabaseKey) {
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 app.use(express.json());
-app.use(cors());
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://project-planner-ten-pearl.vercel.app",
+];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg =
+        "The CORS policy for this site does not allow access from the specified Origin.";
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  methods: ["GET", "POST", "PUT", "DELETE"], // Allow the methods you use
+  credentials: true, // If you're sending cookies or authorization headers
+  optionsSuccessStatus: 204, // Some legacy browsers (IE11, various SmartTVs) choke on 200
+};
+
+app.use(cors(corsOptions)); // Use the configured cors middleware
 
 // GET endpoint to fetch all users
 app.get("/api/data", async (_, res) => {
@@ -46,10 +67,7 @@ app.get("/api/data", async (_, res) => {
 });
 
 // POST endpoint to create a new user
-app.post(("/api/d
-  ata: Request,
- , up: Response
-load.single("profilePic"), async (req, res) => {
+app.post("/api/data", upload.single("profilePic"), async (req, res) => {
   const { username, email, password } = req.body;
   const profilePicFile = req.file;
 
@@ -134,11 +152,12 @@ load.single("profilePic"), async (req, res) => {
     return res.status(201).json(data);
   } catch (err) {
     console.error("Error processing registration:", err);
-    return res.status(500).json({ error:) as unknown as express.RequestHandler "Error processing registration" });
+    return res.status(500).json({ error: "Error processing registration" });
   }
 });
 
 // Root route handler
+// Corrected from pp.get to app.get
 app.get("/", (_, res) => {
   res.send("API is running. Available endpoints: /api/data");
 });
