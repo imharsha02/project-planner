@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import bcrypt from "bcrypt";
 import multer from "multer";
 import dotenv from "dotenv";
+import cors from "cors";
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ if (!supabaseUrl || !supabaseKey) {
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 app.use(express.json());
+app.use(cors());
 
 // GET endpoint to fetch all users
 app.get("/api/data", async (_, res) => {
