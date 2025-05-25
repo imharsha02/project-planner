@@ -17,37 +17,59 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { API_URL } from "@/lib/config";
 
+// Changed profilePic to be optional and of type File | null
 const formSchema = z.object({
-  username: z.string().min(2).max(50),
-  email: z.string().min(3),
-  password: z.string().min(8),
-  profilePic: z.string(),
+  username: z
+    .string()
+    .min(2, "Username must be at least 2 characters.")
+    .max(50, "Username must not exceed 50 characters."),
+  email: z.string().email("Invalid email address."), // Added email validation
+  password: z.string().min(8, "Password must be at least 8 characters."),
+  profilePic: z.any().optional(), // Using z.any() for file input, validation will be custom
 });
+
 export default function RegisterForm() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null); // State to hold the selected file
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       username: "",
       email: "",
       password: "",
-      profilePic: "",
+      // profilePic will be handled separately
     },
   });
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setFile(event.target.files[0]);
+    } else {
+      setFile(null);
+    }
+  };
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!file) {
+      setError("Profile picture is required.");
+      return;
+    }
+
     try {
       setError(null); // Clear any previous errors
+
+      const formData = new FormData();
+      formData.append("username", values.username);
+      formData.append("email", values.email);
+      formData.append("password", values.password);
+      formData.append("profilePic", file); // Append the file
+
       const res = await fetch(`${API_URL}/api/data`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: values.username,
-          email: values.email,
-          password: values.password,
-          profilePic: values.profilePic,
-        }),
+        // No 'Content-Type' header when sending FormData, it's set automatically
+        body: formData,
       });
 
       const result = await res.json();
@@ -137,11 +159,12 @@ export default function RegisterForm() {
         <FormField
           control={form.control}
           name="profilePic"
-          render={({ field }) => (
+          render={() => (
+            // No need to spread field here, handle onChange manually
             <FormItem>
               <FormLabel>Profile pic</FormLabel>
               <FormControl>
-                <Input type="file" {...field} />
+                <Input type="file" onChange={handleFileChange} />
               </FormControl>
               <FormDescription>Upload your profile pic</FormDescription>
               <FormMessage />

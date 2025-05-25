@@ -27,7 +27,30 @@ if (!supabaseUrl || !supabaseKey) {
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 app.use(express.json());
-app.use(cors());
+const allowedOrigins = [
+  "http://localhost:3000", // For local development of your Next.js app
+  "https://project-planner-ten-pearl.vercel.app/", // Replace with your actual deployed Next.js frontend URL
+  "https://project-planner-17mj.onrender.com",
+  // Add other frontend URLs if you have them, e.g., for staging environments
+];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg =
+        "The CORS policy for this site does not allow access from the specified Origin.";
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  methods: ["GET", "POST", "PUT", "DELETE"], // Allow the methods you use
+  credentials: true, // If you're sending cookies or authorization headers
+  optionsSuccessStatus: 204, // Some legacy browsers (IE11, various SmartTVs) choke on 200
+};
+
+app.use(cors(corsOptions)); // Use the configured cors middleware
 
 // GET endpoint to fetch all users
 app.get("/api/data", async (_, res) => {
@@ -136,6 +159,7 @@ app.post("/api/data", upload.single("profilePic"), async (req, res) => {
 });
 
 // Root route handler
+// Corrected from pp.get to app.get
 app.get("/", (_, res) => {
   res.send("API is running. Available endpoints: /api/data");
 });
