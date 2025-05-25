@@ -1,5 +1,4 @@
 import express from "express";
-import type { Request, Response } from "express";
 import { createClient } from "@supabase/supabase-js";
 import { v4 as uuidv4 } from "uuid";
 import bcrypt from "bcrypt";
@@ -29,7 +28,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 app.use(express.json());
 
 // GET endpoint to fetch all users
-app.get("/api/data", async (_: Request, res: Response) => {
+app.get("/api/data", async (_, res) => {
   try {
     const { data, error } = await supabase.from("users").select("*");
 
@@ -45,10 +44,7 @@ app.get("/api/data", async (_: Request, res: Response) => {
 });
 
 // POST endpoint to create a new user
-app.post("/api/data", upload.single("profilePic"), (async (
-  req: Request,
-  res: Response
-) => {
+app.post("/api/data", upload.single("profilePic"), async (req, res) => {
   const { username, email, password } = req.body;
   const profilePicFile = req.file;
 
@@ -135,7 +131,7 @@ app.post("/api/data", upload.single("profilePic"), (async (
     console.error("Error processing registration:", err);
     return res.status(500).json({ error: "Error processing registration" });
   }
-}) as unknown as express.RequestHandler);
+});
 
 // Root route handler
 app.get("/", (_, res) => {
