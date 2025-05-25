@@ -16,6 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 interface UserData {
   username: string;
   email: string;
+  profile_pic_url: string | null;
 }
 
 const ProjectDescription = () => {
@@ -104,9 +105,13 @@ const ProjectDescription = () => {
             Describe your project
           </TypographyH3>
 
-          <Avatar className="">
-            <AvatarImage src="https://github.com/shadcn.png" />
-            <AvatarFallback>CN</AvatarFallback>
+          <Avatar className="h-20 w-20 mb-4">
+            <AvatarImage
+              src={userData.profile_pic_url || "https://github.com/shadcn.png"}
+            />
+            <AvatarFallback>
+              {userData.username.slice(0, 2).toUpperCase()}
+            </AvatarFallback>
           </Avatar>
 
           <Card className="w-max">

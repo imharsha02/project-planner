@@ -21,6 +21,7 @@ const formSchema = z.object({
   username: z.string().min(2).max(50),
   email: z.string().min(3),
   password: z.string().min(8),
+  profilePic: z.string(),
 });
 export default function RegisterForm() {
   const router = useRouter();
@@ -31,6 +32,7 @@ export default function RegisterForm() {
       username: "",
       email: "",
       password: "",
+      profilePic: "",
     },
   });
 
@@ -44,6 +46,7 @@ export default function RegisterForm() {
           username: values.username,
           email: values.email,
           password: values.password,
+          profilePic: values.profilePic,
         }),
       });
 
@@ -58,7 +61,11 @@ export default function RegisterForm() {
       router.push("/project-description");
     } catch (err) {
       console.error("Registration error:", err);
-      setError("An unexpected error occurred. Please try again.");
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
     }
   }
 
@@ -122,6 +129,21 @@ export default function RegisterForm() {
                 <Input placeholder="Password" type="password" {...field} />
               </FormControl>
               <FormDescription>Enter your password</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {/* profilePic 👇 */}
+        <FormField
+          control={form.control}
+          name="profilePic"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Profile pic</FormLabel>
+              <FormControl>
+                <Input type="file" {...field} />
+              </FormControl>
+              <FormDescription>Upload your profile pic</FormDescription>
               <FormMessage />
             </FormItem>
           )}
