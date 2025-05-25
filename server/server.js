@@ -28,10 +28,8 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 app.use(express.json());
 const allowedOrigins = [
-  "http://localhost:3000", // For local development of your Next.js app
-  "https://project-planner-ten-pearl.vercel.app/", // Replace with your actual deployed Next.js frontend URL
-  "https://project-planner-17mj.onrender.com",
-  // Add other frontend URLs if you have them, e.g., for staging environments
+  "http://localhost:3000",
+  "https://project-planner-ten-pearl.vercel.app",
 ];
 
 const corsOptions = {
