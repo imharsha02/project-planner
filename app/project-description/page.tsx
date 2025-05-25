@@ -16,7 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 interface UserData {
   username: string;
   email: string;
-  profile_pic_url: string | null;
+  profilePic: string | null;
 }
 
 const ProjectDescription = () => {
@@ -107,7 +107,7 @@ const ProjectDescription = () => {
 
           <Avatar className="h-20 w-20 mb-4">
             <AvatarImage
-              src={userData.profile_pic_url || "https://github.com/shadcn.png"}
+              src={userData.profilePic || "https://github.com/shadcn.png"}
             />
             <AvatarFallback>
               {userData.username.slice(0, 2).toUpperCase()}
